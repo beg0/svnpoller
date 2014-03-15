@@ -24,18 +24,8 @@ from __future__ import with_statement
 
 import sys, os, subprocess, time
 import xml.dom.minidom, urllib
+import argparse
 import pynotify
-
-class SVNInfo(object):
-    url = ''
-    user = None
-    passwd = None
-    histmax = 100
-    svnbin = 'svn'
-    project = ''
-    cachepath = None
-    split_file = None
-    last_change = None
 
 # these split_file_* functions are available for use as values to the
 # split_file= argument.
@@ -294,27 +284,25 @@ def main():
     pollInterval = 10*60
     project = ''
 
-    #TODO: better option handling
-    if len(sys.argv) != 2:
-	print "Usage: %s <svn_url>\n" % sys.argv[0]
-	sys.exit(255)
+    parser = argparse.ArgumentParser(description='Get notified of an update on a remote Subversion repository.')
+    parser.add_argument('url', metavar='svn_url', help='URL of the remote subversion repository')
+    parser.add_argument('--project', help='define name of the project')
+    parser.add_argument('--bin', dest='svnbin', help='use a custom svn client', default='svn')
+    parser.add_argument('--username', dest='user', help='specify a username')
+    parser.add_argument('--password', dest='passwd', help='specify a password')
+    parser.add_argument('--cache-path', dest='cachepath', help='where to store info of last revision', default=os.path.expanduser("~/.svnpoller"))
+    parser.add_argument('--histmax', help='maximum number of log entries to get at a time', type=int, default=100)
 
-    svnurl = sys.argv[1]
+    svn_data = parser.parse_args()
+    svn_data.split_file = split_file_alwaystrunk # todo put that in options
 
-    svn_data = SVNInfo()
-    svn_data.user = None
-    svn_data.passwd = None
-    svn_data.last_change = None
-    svn_data.cachepath=os.path.expanduser("~/.svnpoller")
+    #FIXME: this are not options, but cached data
     svn_data.prefix = None
-    svn_data.histmax = 100
-    #svn_data.split_file = split_file_projects_branches
-    svn_data.split_file = split_file_alwaystrunk
+    svn_data.last_change = None
 
-    if svnurl.endswith("/"):
-        svnurl = svnurl[:-1] # strip the trailing slash
+    if svn_data.url.endswith("/"):
+        svn_data.url = svn_data.url[:-1] # strip the trailing slash
 
-    svn_data.url = svnurl
     if svn_data.cachepath and os.path.exists(svn_data.cachepath):
         try:
             with open(svn_data.cachepath, "r") as f:
