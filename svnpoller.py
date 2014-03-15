@@ -274,15 +274,9 @@ def get_new_logentries(svn_data, logentries):
 
 
 def main():
-    compare_attrs = ["svnurl", "split_file",
-                     "svnuser", "svnpasswd", "project",
-                     "pollInterval", "histmax",
-                     "svnbin", "cachepath"]
-
     pynotify.init( "SVNPoller" )
 
     pollInterval = 10*60
-    project = ''
 
     parser = argparse.ArgumentParser(description='Get notified of an update on a remote Subversion repository.')
     parser.add_argument('url', metavar='svn_url', help='URL of the remote subversion repository')
@@ -349,8 +343,8 @@ def main():
 
         # whew.
 
-        if project:
-            log_msg("SVNPoller: polling " + project)
+        if svn_data.project:
+            log_msg("SVNPoller: polling " + svn_data.project)
         else:
             log_msg("SVNPoller: polling")
 
