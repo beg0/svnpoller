@@ -305,7 +305,7 @@ def main():
     svn_data.user = None
     svn_data.passwd = None
     svn_data.last_change = None
-    svn_data.cachepath="/home/cca/.svnpoller"
+    svn_data.cachepath=os.path.expanduser("~/.svnpoller")
     svn_data.prefix = None
     svn_data.histmax = 100
     #svn_data.split_file = split_file_projects_branches
