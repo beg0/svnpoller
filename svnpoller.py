@@ -276,11 +276,10 @@ def get_new_logentries(svn_data, logentries):
 def main():
     pynotify.init( "SVNPoller" )
 
-    pollInterval = 10*60
-
     parser = argparse.ArgumentParser(description='Get notified of an update on a remote Subversion repository.')
     parser.add_argument('url', metavar='svn_url', help='URL of the remote subversion repository')
     parser.add_argument('--project', help='define name of the project')
+    parser.add_argument('-i', '--interval', dest='pollinterval', help='define polling interval (in seconds)', type=int, default=60*10)
     parser.add_argument('--bin', dest='svnbin', help='use a custom svn client', default='svn')
     parser.add_argument('--username', dest='user', help='specify a username')
     parser.add_argument('--password', dest='passwd', help='specify a password')
@@ -344,9 +343,9 @@ def main():
         # whew.
 
         if svn_data.project:
-            log_msg("SVNPoller: polling " + svn_data.project)
+            log_msg("SVNPoller: polling %s every %d seconds"  % (svn_data.project, svn_data.pollinterval))
         else:
-            log_msg("SVNPoller: polling")
+            log_msg("SVNPoller: polling every %d seconds" % svn_data.pollinterval)
 
         try:
             svn_info_prefix = getSvnOutput(svn_data, "info")
@@ -380,7 +379,7 @@ def main():
 
     while True:
         poll()
-	time.sleep(pollInterval)
+	time.sleep(svn_data.pollinterval)
 
 
 main()
