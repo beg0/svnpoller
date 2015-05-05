@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # This file is originally taken from Buildbot software.  
 # This file is part of Buildbot.  Buildbot is free software: you can
 # redistribute it and/or modify it under the terms of the GNU General Public
